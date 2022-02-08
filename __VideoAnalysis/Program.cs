@@ -39,7 +39,7 @@ namespace __VideoAnalysis
 			frm = new System.Windows.Forms.Form();
 			
 			frm.WindowState = FormWindowState.Maximized;
-			picture = new PictureBox() {Size=new System.Drawing.Size(1280,720), Dock = DockStyle.Fill };
+			picture = new PictureBox() {Size=new System.Drawing.Size(1280,720), Dock = DockStyle.Fill, SizeMode= PictureBoxSizeMode.Zoom };
 			opn?.Dispose();
             frm.Shown += Frm_Shown;
             frm.FormClosing += Frm_FormClosing;

@@ -383,20 +383,20 @@ namespace __VideoAnalysis
             var ffmpegPath = Path.Combine(Environment.CurrentDirectory, Environment.Is64BitProcess ? "ffmpeg_x64" : "ffmpeg_x86");
             ffmpeg.RootPath = ffmpegPath;
 
-            var ffr = ffmpeg.LibraryDependenciesMap.Keys.Reverse().ToArray();
-            foreach (string lib in ffr)
-            {
-                var dependencies = ffmpeg.LibraryDependenciesMap[lib];
-                dependencies.Where(n => !ffmpeg.LoadedLibraries.ContainsKey(n) && !n.Equals(lib))
-                     .ToList()
-                     .ForEach(n => FFmpeg.AutoGen.Native.LibraryLoader.LoadNativeLibrary(ffmpeg.RootPath, n, ffmpeg.LibraryVersionMap[n]));
-                var ptr = FFmpeg.AutoGen.Native.LibraryLoader.LoadNativeLibrary(ffmpeg.RootPath, lib, ffmpeg.LibraryVersionMap[lib]);
-                logger?.log_m(0, 1, $"Loading library {lib} .. { (ptr == IntPtr.Zero ? "failed." : "success.")}\n");
-                if (ptr != IntPtr.Zero) ffmpeg.LoadedLibraries.Add(lib, ptr);
-            }
-            //#pragma warning disable CS0618 // Type or member is obsolete
-            ffmpeg.avdevice_register_all();
-            ffmpeg.avformat_network_init();
+			var ffr = ffmpeg.LibraryDependenciesMap.Keys.Reverse().ToArray();
+			foreach (string lib in ffr)
+			{
+				var dependencies = ffmpeg.LibraryDependenciesMap[lib];
+				dependencies.Where(n => !ffmpeg.LoadedLibraries.ContainsKey(n) && !n.Equals(lib))
+					  .ToList()
+					  .ForEach(n => FFmpeg.AutoGen.Native.LibraryLoader.LoadNativeLibrary(ffmpeg.RootPath, n, ffmpeg.LibraryVersionMap[n]));
+				var ptr = FFmpeg.AutoGen.Native.LibraryLoader.LoadNativeLibrary(ffmpeg.RootPath, lib, ffmpeg.LibraryVersionMap[lib]);
+				logger?.log_m(0, 1, $"Loading library {lib} .. { (ptr == IntPtr.Zero ? "failed." : "success.")}\n");
+				if (ptr != IntPtr.Zero) ffmpeg.LoadedLibraries.Add(lib, ptr);
+			}
+			//#pragma warning disable CS0618 // Type or member is obsolete
+			ffmpeg.avdevice_register_all();
+			ffmpeg.avformat_network_init();
             //#pragma warning restore CS0618 // Type or member is obsolete
         }
 
