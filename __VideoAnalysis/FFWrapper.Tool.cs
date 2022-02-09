@@ -36,6 +36,19 @@ namespace __VideoAnalysis
 				return Marshal.PtrToStringAnsi((IntPtr)stringAddress);
 			}
 
+			//https://github.com/emgucv/emgucv/blob/master/Emgu.CV/PInvoke/CvInvokeImgproc.cs
+			public static System.Drawing.Size FitInsideKeepAspectRatio(System.Drawing.Size current, System.Drawing.Size max)
+			{
+				double scale = Math.Min((double)max.Width / current.Width, (double)max.Height / current.Height);
+				int a1 = (int)(current.Width * scale);
+				a1 = a1 % 2 == 0 ? a1 : a1 - 1;
+				int a2 = (int)(current.Height * scale);
+				a2 = a2 % 2 == 0 ? a2 : a2 - 1;
+				return new System.Drawing.Size(a1,a2);
+				//return new System.Drawing.Size((int)(current.Width * scale), (int)(current.Height * scale));
+			}
+
+
 		}
 	}
 }

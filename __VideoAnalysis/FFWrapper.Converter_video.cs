@@ -1,6 +1,6 @@
-﻿using System;
+﻿using FFmpeg.AutoGen;
+using System;
 using System.Drawing;
-using FFmpeg.AutoGen;
 using System.Runtime.InteropServices;
 namespace __VideoAnalysis
 {
@@ -23,7 +23,7 @@ namespace __VideoAnalysis
             public AVPixelFormat _sourcePixelFormat;
 
             public Converter_video(Size sourceSize, AVPixelFormat sourcePixelFormat,
-            Size destinationSize, AVPixelFormat destinationPixelFormat, /*AVColorSpace colorspc, int colorspc0, */int alignment)
+            Size destinationSize, AVPixelFormat destinationPixelFormat, int full_range, int alignment)
             {
                 _destinationSize = destinationSize;
                 int SwsFlags = 0;
@@ -32,9 +32,16 @@ namespace __VideoAnalysis
                 _destinationPixelFormat = destinationPixelFormat;
                 _sourcePixelFormat = sourcePixelFormat;
                 sourceSize1 = sourceSize;
-
+                from_full_range = full_range > 0;
                 SwsFlags = ffmpeg.SWS_AREA;
                 SwsFlags |= ffmpeg.SWS_PRINT_INFO;
+                SwsFlags |= ffmpeg.SWS_ACCURATE_RND;
+
+                if (from_full_range)
+                {
+                    SwsFlags |= ffmpeg.SWS_FULL_CHR_H_INP;
+                    //SwsFlags |= ffmpeg.SWS_FULL_CHR_H_INT;
+                }
                 flgs = SwsFlags;
 
                 if (_pConvertContext == null)
@@ -74,7 +81,7 @@ namespace __VideoAnalysis
             }
             private static bool one = false;
 
-            public unsafe AVFrame Convert(AVFrame* sourceFrame0/*, Converter_video cc*//*, out AVFrame dstframe*/)
+            public unsafe AVFrame* Convert(AVFrame* sourceFrame0)
             {
 
                 var cc = this;
@@ -99,23 +106,36 @@ namespace __VideoAnalysis
                 {
                     System.Diagnostics.Debugger.Break();
                 }
-                var data = new byte_ptrArray8();
-                data.UpdateFrom(cc._dstData);
-                var linesize = new int_array8();
-                linesize.UpdateFrom(cc._dstLinesize);
+                AVFrame* fba = ffmpeg.av_frame_alloc();
+                fba->data.UpdateFrom(cc._dstData);
+                fba->linesize.UpdateFrom(cc._dstLinesize);
+                fba->best_effort_timestamp = sourceFrame0->best_effort_timestamp;
+                fba->format = (int)cc.fmt;
+                fba->color_range = sourceFrame0->color_range;
+                fba->width = cc._destinationSize.Width;
+                fba->height = cc._destinationSize.Height;
+                fba->pts = sourceFrame0->pts;
+                fba->pkt_dts = sourceFrame0->pkt_dts;
+                fba->pkt_pos = sourceFrame0->pkt_pos;
+                return fba;
 
-                return new AVFrame
-                {
-                    data = data,
-                    linesize = linesize,
-                    width = cc._destinationSize.Width,
-                    height = cc._destinationSize.Height,
-                    format = (int)cc.fmt,
-                    pkt_dts = sourceFrame0->pkt_dts,
-                    pkt_pos = sourceFrame0->pkt_pos,
-                    pts = sourceFrame0->pts,
-                    best_effort_timestamp = sourceFrame0->best_effort_timestamp
-                };
+                //var data = new byte_ptrArray8();
+                //data.UpdateFrom(cc._dstData);
+                //var linesize = new int_array8();
+                //linesize.UpdateFrom(cc._dstLinesize);
+
+                //return new AVFrame
+                //{
+                //    data = data,
+                //    linesize = linesize,
+                //    width = cc._destinationSize.Width,
+                //    height = cc._destinationSize.Height,
+                //    format = (int)cc.fmt,
+                //    pkt_dts = sourceFrame0->pkt_dts,
+                //    pkt_pos = sourceFrame0->pkt_pos,
+                //    pts = sourceFrame0->pts,
+                //    best_effort_timestamp = sourceFrame0->best_effort_timestamp
+                //};
             }
 
 

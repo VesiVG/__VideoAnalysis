@@ -85,7 +85,7 @@ namespace __VideoAnalysis
 				{
 					if (debugMode)
 					{
-						var fis = Path.Combine(Environment.CurrentDirectory, "log" + DateTime.Now.ToLongTimeString().Replace(":", "_") + ".log");
+						var fis = Path.Combine(Environment.CurrentDirectory, "log" + Clock_Provider.Now.ToShortDateString().Replace(".","")+ Clock_Provider.Now.ToLongTimeString().Replace(":", "_") + ".log");
 						if (File.Exists(fis))
 							lock (Listlock) File.AppendAllLines(fis, mslist);
 						else
