@@ -33,15 +33,18 @@ namespace __VideoAnalysis
                 _sourcePixelFormat = sourcePixelFormat;
                 sourceSize1 = sourceSize;
                 from_full_range = full_range > 0;
-                SwsFlags = ffmpeg.SWS_AREA;
-                SwsFlags |= ffmpeg.SWS_PRINT_INFO;
-                SwsFlags |= ffmpeg.SWS_ACCURATE_RND;
-
                 if (from_full_range)
                 {
+                    SwsFlags = ffmpeg.SWS_AREA;
                     SwsFlags |= ffmpeg.SWS_FULL_CHR_H_INP;
-                    //SwsFlags |= ffmpeg.SWS_FULL_CHR_H_INT;
+                    //SwsFlags |= ffmpeg.SWS_FULL_CHR_H_INT; //slow
                 }
+                else
+                {
+                    SwsFlags = ffmpeg.SWS_LANCZOS;
+                }
+                SwsFlags |= ffmpeg.SWS_PRINT_INFO;
+                SwsFlags |= ffmpeg.SWS_ACCURATE_RND; //slow but beautiful
                 flgs = SwsFlags;
 
                 if (_pConvertContext == null)
@@ -63,7 +66,6 @@ namespace __VideoAnalysis
                 _dstLinesize = new int_array4();
 
                 var rret = ffmpeg.av_image_fill_arrays(ref _dstData, ref _dstLinesize, (byte*)_convertedFrameBufferPtr, destinationPixelFormat, destinationSize.Width, destinationSize.Height, alignment);
-                //var rret = 0;
                 if (rret < 0)
                 {
                     System.Diagnostics.Debugger.Break();

@@ -55,15 +55,27 @@
     <Compile Include="FFWrapper.Logger.cs" />
     <Compile Include="FFWrapper.MediaFrame.cs" />
     <Compile Include="FFWrapper.Tool.cs" />
+    <Compile Include="GLW.cs" />
+    <Compile Include="GLW.Frame.cs" />
+    <Compile Include="GLW.Shader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Fragment.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Vertex.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FFmpeg.AutoGen">
       <Version>4.4.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="OpenTK">
+      <Version>3.3.2</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

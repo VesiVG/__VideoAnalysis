@@ -9,7 +9,7 @@ namespace __VideoAnalysis
 {
 	public unsafe partial class FFWrapper
 	{
-
+		[StructLayout(LayoutKind.Sequential)]
 		public class Pool : IDisposable
 		{
 			public Pool(int maxcap)
@@ -28,7 +28,6 @@ namespace __VideoAnalysis
 				public bool IsEmpty;
 				public Content(MediaFrame nv = null, long ii = -1, bool iisemp = true)
 				{
-
 					i = ii < 0 ? (nv != null ? nv.Id : 0) : ii;
 					Frame = new MediaFrame();
 					if (nv != null)
@@ -79,13 +78,13 @@ namespace __VideoAnalysis
 			{
 				if (_pool == null || _pool.Count <= 0)
 				{
-					_frame = null;// new MediaFrame();
+					_frame = null;
 					return -1;
 				}
 				_frame = new MediaFrame();
 				lock (_locker)
 				{
-					_frame.BaitAndSwitch(_pool[0].Frame);//.Frame.pFrame);
+					_frame.BaitAndSwitch(_pool[0].Frame);
 					FramesPassed = _frame.Id>FramesPassed? _frame.Id : FramesPassed;
 					_pool[0].Dispose();
 					_pool.RemoveAt(0);
@@ -106,13 +105,13 @@ namespace __VideoAnalysis
 			{
 				if (_pool == null || _pool.Count <= 0)
 				{
-					_frame = null;// new MediaFrame();
+					_frame = null;
 					return -1;
 				}
 				_frame = new MediaFrame();
 				lock (_locker)
 				{
-					_frame.BaitAndSwitch(_pool[_pool.Count - 1].Frame);//.pFrame);
+					_frame.BaitAndSwitch(_pool[_pool.Count - 1].Frame);
 					_pool[_pool.Count - 1].Dispose();
 					_pool.RemoveAt(_pool.Count - 1);
 				}
@@ -135,172 +134,9 @@ namespace __VideoAnalysis
 					}
 					_pool.Clear();
 				}
-				//throw new NotImplementedException();
 			}
 		}
 
-
-
-
-		[StructLayout(LayoutKind.Sequential)]
-		public class MediaFramePool : IDisposable
-		{
-
-			public MediaFramePool(int maxf)
-			{
-
-				if (_pool == null)
-					_pool = new ArrayList();
-				else
-					lock (_pool.SyncRoot) ClearAll();
-				MaxCount = maxf;
-				_IsDisposed = false;
-			}
-			private readonly ArrayList _pool;
-			protected bool _IsDisposed = false;
-			private int MaxCount;
-			public object IsDisposed
-			{
-				get { return _IsDisposed; }
-			}
-			public int Count
-			{
-				get
-				{
-					if (_pool == null)
-						return 0;
-					int acnt;
-					lock (_pool.SyncRoot)
-						acnt = _pool.Count;
-					return acnt;
-				}
-			}
-
-			public void Add(MediaFrame val)
-			{
-				if (_pool != null)
-				{
-
-
-					if (_pool.Count >= MaxCount)
-					{
-						GetLast(out MediaFrame rmp);
-						rmp.Dispose();
-						rmp = null;
-					}
-					lock (_pool.SyncRoot)
-						_pool.Add(val);
-
-				}
-			}
-			public void RemoveOne(MediaFrame val)
-			{
-				if (_pool != null)
-				{
-					lock (_pool.SyncRoot)
-					{
-						_pool.Remove(val);
-					}
-					val.Dispose();
-					//_pool.RemoveAt(val);
-
-				}
-			}
-			public void ClearAll()
-			{
-				if (_pool != null && _pool.Count > 0)
-				{
-					lock (_pool.SyncRoot)
-					{
-						for (int xi = 0; xi < _pool.Count; xi++)
-							((MediaFrame)_pool[xi]).Dispose();
-						_pool.Clear();
-					}
-				}
-			}
-			public int GetNext(out MediaFrame tmp)
-			{
-				int ret = -1;
-				if (Count == 0)
-				{
-					tmp = new MediaFrame();
-					return ret;
-				}
-				lock (_pool.SyncRoot)
-				{
-					//var tmp = new MediaFrame();
-					tmp = _pool.Cast<MediaFrame>().Take<MediaFrame>(1).First<MediaFrame>();
-				}
-				RemoveOne(tmp);
-				ret = 0;
-
-				return ret;
-			}
-			public int GetLast(out MediaFrame tmp)
-			{
-				int ret = -1;
-				if (Count == 0)
-				{
-					tmp = new MediaFrame();
-					return ret;
-				}
-				lock (_pool.SyncRoot)
-				{
-					tmp = _pool.Cast<MediaFrame>().Take<MediaFrame>(1).Last<MediaFrame>();
-					_pool.Remove(tmp);
-					ret = 0;
-				}
-				return ret;
-			}
-			public bool GetSpecificItem(MediaFrame val)
-			{
-				int cnt = 0;
-				//int ret;
-				if (_pool != null && _pool.Count > 0)
-				{
-					lock (_pool.SyncRoot)
-					{
-						//ret=_pool.Cast<int>().Select<int,bool>(new Func<int, bool>((int l) =>
-						//{
-						//	Thread.MemoryBarrier();
-						//	if (l == val)
-						//	{
-						//		return true;
-						//	}
-						//	return false;
-						//})).Take<) { };
-						foreach (var vv in _pool.Cast<MediaFrame>().TakeWhile(new Func<MediaFrame, bool>((MediaFrame l) =>
-						{
-
-							if (l == val)
-							{
-								return true;
-							}
-							return false;
-						})))
-						{
-							cnt++;
-						};
-						//return val;
-					}
-				}
-				if (cnt > 0)
-					return true;
-				return false;
-			}
-			public void Dispose()
-			{
-				if (_pool != null)
-				{
-					lock (_pool.SyncRoot)
-					{
-						_pool.Clear();
-					}
-				}
-
-				_IsDisposed = true;
-			}
-		}
 		public class MediaFrame : IDisposable
 		{
 			public MediaFrame()
@@ -344,7 +180,6 @@ namespace __VideoAnalysis
 				IsDisposed = true;
 				ShowTime = 0;
 			}
-			//public AVFrame Frame;
 			public AVFrame* pFrame;
 			public long ShowTime;
 			public long Id;
