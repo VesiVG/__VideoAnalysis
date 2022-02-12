@@ -56,7 +56,7 @@ namespace __VideoAnalysis
 				}
 
 				System.Drawing.Size v = FFWrapper.Tool.FitInsideKeepAspectRatio(new System.Drawing.Size(texture.plane0.size.Width, texture.plane0.size.Height), this.ClientRectangle.Size);
-
+				gl.Flush();
 				gl.Viewport((this.ClientRectangle.Width - v.Width) / 2, (this.ClientRectangle.Height - v.Height) / 2, v.Width, v.Height);
 
 				gl.ActiveTexture(TextureUnit.Texture0);
@@ -71,7 +71,7 @@ namespace __VideoAnalysis
 				gl.End();
 				_Shader.Release();
 				Ctx?.SwapBuffers();
-				gl.Flush();
+			
 				if (glerr.glGetError() != wwgl.ErrorCode.NoError)
 				{
 					_ = MessageBox.Show(glerr.err.ToString());
@@ -103,7 +103,7 @@ namespace __VideoAnalysis
 			private void _HandleCreated(object sender, EventArgs e)
 			{
 				_window = OpenTK.Platform.Utilities.CreateWindowsWindowInfo(this.Handle);
-				Ctx = new GraphicsContext(new GraphicsMode(32), _window, 2, 1, GraphicsContextFlags.Default);
+				Ctx = new GraphicsContext(new GraphicsMode(32), _window, 4, 4, GraphicsContextFlags.Debug);
 				Ctx.MakeCurrent(_window);
 				Ctx.LoadAll();
 				FFWrapper.logger?.log_m(1, 1, $"Somehow it worked.\n");

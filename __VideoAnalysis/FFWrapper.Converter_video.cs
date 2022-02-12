@@ -41,7 +41,7 @@ namespace __VideoAnalysis
                 }
                 else
                 {
-                    SwsFlags = ffmpeg.SWS_LANCZOS;
+                    SwsFlags = ffmpeg.SWS_BICUBIC;
                 }
                 SwsFlags |= ffmpeg.SWS_PRINT_INFO;
                 SwsFlags |= ffmpeg.SWS_ACCURATE_RND; //slow but beautiful

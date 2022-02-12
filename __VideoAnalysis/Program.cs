@@ -21,7 +21,7 @@ namespace __VideoAnalysis
 			opn.Multiselect = false;
 			if (mode == RunMode.Opengl)
 			{
-				OpenTK.ToolkitOptions tko = new OpenTK.ToolkitOptions() { Backend = OpenTK.PlatformBackend.Default, EnableHighResolution = true };
+				OpenTK.ToolkitOptions tko = new OpenTK.ToolkitOptions() { Backend = OpenTK.PlatformBackend.PreferNative, EnableHighResolution = true };
 				using (OpenTK.Toolkit.Init(tko))
 				{
 					RunMe();
@@ -59,14 +59,17 @@ namespace __VideoAnalysis
 
 			}
 			frm = new System.Windows.Forms.Form();
-
+			frm.KeyPreview = true;
 			frm.WindowState = FormWindowState.Maximized;
 			if (mode == RunMode.Winforms)
 			{
 				picture = new PictureBox() { Size = new System.Drawing.Size(1280, 720), Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.Zoom };
 			}
-			pic = new GLW();
-			pic.Size = new System.Drawing.Size(1280, 720);
+			else if (mode == RunMode.Opengl)
+			{
+				pic = new GLW();
+				pic.Size = new System.Drawing.Size(1280, 720);
+			}
 			opn?.Dispose();
 			frm.Shown += Frm_Shown;
 			frm.FormClosing += Frm_FormClosing;
@@ -162,7 +165,7 @@ namespace __VideoAnalysis
 			{
 				FFWrapper.Decoder.need_stop = true;
 				bgr_work_need_stop = true;
-				Application.Exit();
+				frm.Close();
 			}
 		}
 
@@ -288,7 +291,7 @@ namespace __VideoAnalysis
 							if (picture.Image == null || (picture.Image.Width != cpp3.pFrame->width || picture.Image.Height != cpp3.pFrame->height))
 							{
 								if (picture.Image != null) picture.Image.Dispose();
-								picture.Image = new System.Drawing.Bitmap(cpp3.pFrame->width, cpp3.pFrame->height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+								picture.Image = new System.Drawing.Bitmap(cpp3.pFrame->width, cpp3.pFrame->height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
 							}
 							UpdateImg(cpp3, picture.Image);
 									/*  educational purposes:
