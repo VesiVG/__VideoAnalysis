@@ -17,7 +17,7 @@ namespace __VideoAnalysis
                 IsDone = false;
                 FFWrapper.debugMode = false;
                 logger = new Logger();
-                logger.loglevs = MediaLogMessageType.Debug;
+                logger.loglevs = MediaLogMessageType.Verbose;
                 ffmpeg_init();
                 frameidx = 0;
                 ffmpeg.av_log_set_flags(ffmpeg.AV_LOG_SKIP_REPEATED);
@@ -81,7 +81,7 @@ namespace __VideoAnalysis
                 Codec = null;
                 fixed (AVCodec** t = &Codec)
                     _streamindex = ffmpeg.av_find_best_stream(this.Fmtctx, AVMediaType.AVMEDIA_TYPE_VIDEO, -1, -1, t, 0);
-               // if (_streamindex < 0)
+                // if (_streamindex < 0)
                 {
                     for (int i01 = 0; i01 < Fmtctx->nb_streams; i01++)
                     {
@@ -220,7 +220,7 @@ namespace __VideoAnalysis
                                 var pta = cpuframe->best_effort_timestamp;
                                 frameidx++;
                                 //pool.Add(cpuframe);
-                                pool.Add(new MediaFrame(cpuframe, frameidx));
+                                pool.Add(new MediaFrame(cpuframe, frameidx, (AVPixelFormat)cpuframe->format));
 
                                 ffmpeg.av_frame_unref(cpuframe);
                                 if (pta != ffmpeg.AV_NOPTS_VALUE)

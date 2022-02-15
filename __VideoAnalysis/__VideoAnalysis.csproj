@@ -59,6 +59,7 @@
     <Compile Include="GLW.Frame.cs" />
     <Compile Include="GLW.Shader.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="GLW.Pbo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -66,7 +67,13 @@
     <None Include="Fragment.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Fragment_s.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Vertex.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Vertex_s.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

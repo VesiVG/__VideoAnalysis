@@ -35,9 +35,24 @@ namespace __VideoAnalysis
 
                 return Marshal.PtrToStringAnsi((IntPtr)stringAddress);
             }
-
-            //https://github.com/emgucv/emgucv/blob/master/Emgu.CV/PInvoke/CvInvokeImgproc.cs
-            public static System.Drawing.Size FitInsideKeepAspectRatio(System.Drawing.Size current, System.Drawing.Size max)
+         public static AVPixelFormat MatchPer(AVPixelFormat fmt)
+         {
+            AVPixelFormat src = fmt;
+            switch (fmt)
+            {
+               case AVPixelFormat.AV_PIX_FMT_NV12:
+               case AVPixelFormat.AV_PIX_FMT_DXVA2_VLD:
+               case AVPixelFormat.AV_PIX_FMT_D3D11:
+                  src = AVPixelFormat.AV_PIX_FMT_NV12;
+                  break;
+               case AVPixelFormat.AV_PIX_FMT_YUVJ420P:
+                  src = AVPixelFormat.AV_PIX_FMT_YUV420P;
+                  break;
+            }
+            return src;
+         }
+         //https://github.com/emgucv/emgucv/blob/master/Emgu.CV/PInvoke/CvInvokeImgproc.cs
+         public static System.Drawing.Size FitInsideKeepAspectRatio(System.Drawing.Size current, System.Drawing.Size max)
             {
                 double scale = Math.Min((double)max.Width / current.Width, (double)max.Height / current.Height);
                 int a1 = (int)(current.Width * scale);
